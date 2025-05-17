@@ -1,5 +1,6 @@
 <script>
-    import Message from "$lib/components/Message.svelte";
-</script>
-
-<Message />
+    import Questions from "$lib/components/Questions.svelte";
+  </script>
+  
+  <Questions />
+  
