@@ -1,16 +1,15 @@
 <script>
-  import { PUBLIC_API_URL } from "$env/static/public";
+  import { executeQuery } from "$lib/apis/database-api.js";
 
   let query = $state("");
   let result = $state([]);
-
-  const executeQuery = async () => {
-    const response = await fetch(PUBLIC_API_URL, {
-      method: "POST",
-      body: JSON.stringify({ query }),
-    });
-
-    result = await response.json();
+  let rowCount = $state(0);
+  let columnNames = $state([]);
+  
+  const runSQL = async () => {
+    result = await executeQuery(query);
+    rowCount = result.length;
+    columnNames = result.length > 0 ? Object.keys(result[0]) : [];
   };
 </script>
 
@@ -19,8 +18,20 @@
 <h2>Write query here</h2>
 
 <textarea bind:value={query}></textarea><br />
-<button onclick={executeQuery}>Execute query</button>
+<button onclick={runSQL}>Execute query</button>
 
 <h2>Query results:</h2>
 
 <p>{JSON.stringify(result)}</p>
+
+{#if result.length > 0}
+  <p>Rows: {rowCount}</p>
+
+  <h3>Column names</h3>
+  <ul>
+    {#each columnNames as name}
+      <li>{name}</li>
+    {/each}
+  </ul>
+{/if}
+
