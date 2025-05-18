@@ -4,6 +4,14 @@
   
     // prop
     let { question } = $props();
+    
+    const handleUpvote = async () => {
+      await qs.upvote(question.id);
+    };
+    
+    const handleDelete = async () => {
+      await qs.remove(question.id);
+    };
   </script>
   
   <div class="border p-2 space-y-1">
@@ -12,7 +20,6 @@
   
     <p>Upvotes: {question.upvotes}</p>
   
-    <button onclick={() => qs.upvote(question.id)}>Upvote</button>
-    <button onclick={() => qs.remove(question.id)}>Delete</button>
+    <button onclick={handleUpvote}>Upvote</button>
+    <button onclick={handleDelete}>Delete</button>
   </div>
-  
