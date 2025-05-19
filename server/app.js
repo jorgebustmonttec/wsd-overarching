@@ -1,80 +1,148 @@
 import { Hono } from "@hono/hono";
 import { cors } from "@hono/hono/cors";
 import { logger } from "@hono/hono/logger";
+import postgres from "postgres";
+import { z } from "zod";
+import { zValidator } from "zValidator";
+
+// Initialize database connection (uses env variables)
+const sql = postgres();
 
 const app = new Hono();
 app.use("/*", cors());
 app.use("/*", logger());
 
-// In-memory list of questions
-let questions = [];
+// Validation schemas
+const courseSchema = z.object({
+  name: z.string().min(3, "Course name must be at least 3 characters"),
+});
 
-
+const questionSchema = z.object({
+  title: z.string().min(3, "Question title must be at least 3 characters"),
+  text: z.string().min(3, "Question text must be at least 3 characters"),
+});
 
 // --- Courses Endpoints ---
 
-// 1. GET /courses
-app.get("/courses", (c) =>
-    c.json({
-      courses: [
-        { id: 1, name: "Web Software Development" },
-        { id: 2, name: "Device-Agnostic Design" },
-      ],
-    })
-  );
+// 1. GET /api/courses
+app.get("/api/courses", async (c) => {
+  const courses = await sql`SELECT * FROM courses`;
+  return c.json(courses);
+});
+
+// 2. GET /api/courses/:id
+app.get("/api/courses/:id", async (c) => {
+  const id = Number(c.req.param("id"));
+  const [course] = await sql`SELECT * FROM courses WHERE id = ${id}`;
   
-  // 2. GET /courses/:id
-  app.get("/courses/:id", (c) => {
-    const id = Number(c.req.param("id"));
-    return c.json({ course: { id, name: "Course Name" } });
-  });
+  if (!course) {
+    return c.json({ error: "Course not found" }, 404);
+  }
   
-  // 3. POST /courses
-  app.post("/courses", async (c) => {
-    const { name } = await c.req.json();
-    return c.json({ course: { id: 3, name } });
-  });
+  return c.json(course);
+});
+
+// 3. POST /api/courses
+app.post("/api/courses", zValidator("json", courseSchema), async (c) => {
+  const { name } = await c.req.valid("json");
   
-  // --- Questions Endpoints ---
+  try {
+    const [newCourse] = await sql`
+      INSERT INTO courses (name) 
+      VALUES (${name}) 
+      RETURNING *
+    `;
+    
+    return c.json(newCourse);
+  } catch (error) {
+    return c.json({ error: "Failed to create course" }, 500);
+  }
+});
+
+// 4. DELETE /api/courses/:id
+app.delete("/api/courses/:id", async (c) => {
+  const id = Number(c.req.param("id"));
   
-  // 4. GET /courses/:id/questions
-  app.get("/courses/:id/questions", (c) => c.json(questions));
+  const [deletedCourse] = await sql`
+    DELETE FROM courses 
+    WHERE id = ${id} 
+    RETURNING *
+  `;
   
-  // 5. POST /courses/:id/questions
-  app.post("/courses/:id/questions", async (c) => {
-    const { title, text } = await c.req.json();
-    const newQuestion = {
-      id: questions.length + 1,
-      title,
-      text,
-      upvotes: 0,
-    };
-    questions.push(newQuestion);
+  if (!deletedCourse) {
+    return c.json({ error: "Course not found" }, 404);
+  }
+  
+  return c.json(deletedCourse);
+});
+
+// --- Questions Endpoints ---
+
+// 5. GET /api/courses/:id/questions
+app.get("/api/courses/:id/questions", async (c) => {
+  const courseId = Number(c.req.param("id"));
+  
+  const questions = await sql`
+    SELECT * FROM questions 
+    WHERE course_id = ${courseId}
+  `;
+  
+  return c.json(questions);
+});
+
+// 6. POST /api/courses/:id/questions
+app.post("/api/courses/:id/questions", zValidator("json", questionSchema), async (c) => {
+  const courseId = Number(c.req.param("id"));
+  const { title, text } = await c.req.valid("json");
+  
+  try {
+    const [newQuestion] = await sql`
+      INSERT INTO questions (course_id, title, text, upvotes) 
+      VALUES (${courseId}, ${title}, ${text}, 0) 
+      RETURNING *
+    `;
+    
     return c.json(newQuestion);
-  });
-  
-  // 6. POST /courses/:id/questions/:qId/upvote
-  app.post("/courses/:id/questions/:qId/upvote", (c) => {
-    const qId = Number(c.req.param("qId"));
-    const question = questions.find((q) => q.id === qId);
-    if (question) {
-      question.upvotes++;
-      return c.json(question);
-    }
-    return c.json({ error: "Question not found" }, 404);
-  });
-  
-  // 7. DELETE /courses/:id/questions/:qId
-  app.delete("/courses/:id/questions/:qId", (c) => {
-    const qId = Number(c.req.param("qId"));
-    const index = questions.findIndex((q) => q.id === qId);
-    if (index !== -1) {
-      const [removedQuestion] = questions.splice(index, 1);
-      return c.json(removedQuestion);
-    }
-    return c.json({ error: "Question not found" }, 404);
-  });
-  
+  } catch (error) {
+    return c.json({ error: "Failed to create question" }, 500);
+  }
+});
 
+// 7. POST /api/courses/:id/questions/:qId/upvote
+app.post("/api/courses/:id/questions/:qId/upvote", async (c) => {
+  const courseId = Number(c.req.param("id"));
+  const questionId = Number(c.req.param("qId"));
+  
+  const [updatedQuestion] = await sql`
+    UPDATE questions 
+    SET upvotes = upvotes + 1 
+    WHERE id = ${questionId} AND course_id = ${courseId} 
+    RETURNING *
+  `;
+  
+  if (!updatedQuestion) {
+    return c.json({ error: "Question not found" }, 404);
+  }
+  
+  return c.json(updatedQuestion);
+});
 
-  export default app;
+// 8. DELETE /api/courses/:id/questions/:qId
+app.delete("/api/courses/:id/questions/:qId", async (c) => {
+  const courseId = Number(c.req.param("id"));
+  const questionId = Number(c.req.param("qId"));
+  
+  const [deletedQuestion] = await sql`
+    DELETE FROM questions 
+    WHERE id = ${questionId} AND course_id = ${courseId} 
+    RETURNING *
+  `;
+  
+  if (!deletedQuestion) {
+    return c.json({ error: "Question not found" }, 404);
+  }
+  
+  return c.json(deletedQuestion);
+});
+
+export default app;
