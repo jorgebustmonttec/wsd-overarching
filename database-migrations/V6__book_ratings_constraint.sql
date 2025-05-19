@@ -1,0 +1,1 @@
+ALTER TABLE book_ratings ADD CONSTRAINT rating_range CHECK (rating >= 1 AND rating <= 5);

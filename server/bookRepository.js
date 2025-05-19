@@ -1,10 +1,6 @@
 import postgres from "postgres";
 
-const sql = postgres({
-  max: 2,
-  max_lifetime: 10,
-});
-
+const sql = postgres();
 
 const create = async (book) => {
   const result = await sql`INSERT INTO books (title, year)
@@ -35,4 +31,4 @@ const remove = async (id) => {
   return result[0];
 };
 
-export { create, readAll, readOne, update, remove };
+export { create, readAll, readOne, remove, update };
