@@ -18,6 +18,11 @@
   });
 </script>
 
-<h1>{courseName}</h1>
-
-<Questions courseId={data.id} />
+<div class="space-y-6">
+  <div class="bg-blue-100 p-6 rounded-lg shadow-md">
+    <h1>{courseName}</h1>
+  </div>
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <Questions courseId={data.id} />
+  </div>
+</div>

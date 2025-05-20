@@ -1,0 +1,35 @@
+@import "tailwindcss";
+@import "@skeletonlabs/skeleton";
+@import "@skeletonlabs/skeleton/optional/presets";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-100 text-gray-800 font-sans;
+}
+
+h1, h2, h3 {
+  @apply font-extrabold text-gray-900;
+}
+
+h1 {
+  @apply text-4xl md:text-5xl text-blue-600 mb-4;
+}
+
+h2 {
+  @apply text-3xl text-blue-500 mb-3;
+}
+
+button {
+  @apply px-6 py-3 rounded-lg text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all shadow-lg;
+}
+
+input, textarea {
+  @apply w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm;
+}
+
+form {
+  @apply bg-white shadow-lg p-6 rounded-lg border border-gray-200;
+}

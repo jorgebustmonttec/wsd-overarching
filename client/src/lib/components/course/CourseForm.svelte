@@ -16,12 +16,25 @@
   };
 </script>
 
-<form on:submit={submit} class="space-y-2">
-  <input
-    type="text"
-    placeholder="name"
-    bind:value={name}
-    required
-  />
-  <input type="submit" value="Add Course" disabled={submitting} />
+<form on:submit={submit} class="space-y-4 bg-white shadow-lg p-6 rounded-lg border border-gray-200">
+  <div>
+    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Course Name</label>
+    <input
+      type="text"
+      id="name"
+      placeholder="Enter course name"
+      bind:value={name}
+      required
+      class="input"
+    />
+  </div>
+  <div class="flex justify-end">
+    <button
+      type="submit"
+      disabled={submitting}
+      class="btn preset-filled-primary-500 w-full"
+    >
+      {submitting ? "Adding..." : "Add Course"}
+    </button>
+  </div>
 </form>
