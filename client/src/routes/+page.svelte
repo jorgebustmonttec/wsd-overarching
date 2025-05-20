@@ -1,17 +1,22 @@
-<form class="mx-auto w-full max-w-md space-y-4">
-  <h2 class="h2">Create a todo</h2>
+<script>
+	import Todo from "$lib/components/Todo.svelte";
+	import { fade } from "svelte/transition";
 
-  <label for="name" class="label">
-    <span class="label-text">Name</span>
-    <input class="input" type="text" id="name" name="name" />
-  </label>
+  let todos = $state([
+    { name: "First todo", done: false },
+    { name: "Second todo", done: true },
+    { name: "Third todo", done: false },
+  ]);
 
-  <label class="flex items-center space-x-2">
-    <input class="checkbox" type="checkbox" id="completed" name="completed" />
-    <p>Completed</p>
-  </label>
+  const remove = (todo) => {
+    todos = todos.filter((t) => t !== todo);
+  };
+</script>
 
-  <button type="submit" class="w-full btn preset-filled-primary-500">
-    Create
-  </button>
-</form>
+<ul class="space-y-4">
+  {#each todos as todo (todo)}
+    <li transition:fade>
+      <Todo {todo} removeTodo={() => remove(todo)} />
+    </li>
+  {/each}
+</ul>
