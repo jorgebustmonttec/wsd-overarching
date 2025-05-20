@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { courseApi } from "$lib/services/courseApi.js";
-  import Questions from "$lib/components/question/Questions.svelte";
+  import Questions from "$lib/components/Questions.svelte";
 
   let { data } = $props();
   let courseName = $state("Loading...");
