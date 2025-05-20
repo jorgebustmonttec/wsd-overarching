@@ -1,9 +1,11 @@
-<p> courses </p>
-<ul>
-	<li><a href="/courses/1">Course 1</a></li>
-	<li><a href="/courses/2">Course 2</a></li>
-	<li><a href="/courses/3">Course 3</a></li>
-	<li><a href="/courses/4">Course 4</a></li>
-	<li><a href="/courses/5">Course 5</a></li>
-</ul>
+<script>
+  import CourseForm from "$lib/components/course/CourseForm.svelte";
+  import CourseList from "$lib/components/course/CourseList.svelte";
+</script>
+
+<h1>Courses</h1>
+
+<CourseForm />
+<hr />
+<CourseList />
 

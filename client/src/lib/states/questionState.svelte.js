@@ -5,12 +5,12 @@ let questions = $state([]);               // shared reactive array
 let loading = $state(false);
 let error = $state(null);
 
-// Load questions initially
-const loadQuestions = async () => {
+// Load questions for a specific course
+const loadQuestions = async (courseId) => {
   try {
     loading = true;
     error = null;
-    questions = await questionApi.getQuestions();
+    questions = await questionApi.getQuestions(courseId);
   } catch (err) {
     error = "Failed to load questions";
     console.error(err);
@@ -26,15 +26,15 @@ const useQuestionState = () => ({
   get hasError()       { return error; },
 
   // --- actions -----------------------------------------------------------
-  async fetchQuestions() {
-    await loadQuestions();
+  async fetchQuestions(courseId) {
+    await loadQuestions(courseId);
   },
 
-  async add({ title, text }) {
+  async add(courseId, { title, text }) {
     try {
       loading = true;
-      await questionApi.addQuestion({ title, text });
-      await loadQuestions(); // Refresh the list
+      await questionApi.addQuestion(courseId, { title, text });
+      await loadQuestions(courseId); // Refresh the list
     } catch (err) {
       error = "Failed to add question";
       console.error(err);
@@ -43,11 +43,11 @@ const useQuestionState = () => ({
     }
   },
 
-  async remove(id) {
+  async remove(courseId, questionId) {
     try {
       loading = true;
-      await questionApi.deleteQuestion(id);
-      await loadQuestions(); // Refresh the list
+      await questionApi.deleteQuestion(courseId, questionId);
+      await loadQuestions(courseId); // Refresh the list
     } catch (err) {
       error = "Failed to delete question";
       console.error(err);
@@ -56,11 +56,11 @@ const useQuestionState = () => ({
     }
   },
 
-  async upvote(id) {
+  async upvote(courseId, questionId) {
     try {
       loading = true;
-      await questionApi.upvoteQuestion(id);
-      await loadQuestions(); // Refresh the list
+      await questionApi.upvoteQuestion(courseId, questionId);
+      await loadQuestions(courseId); // Refresh the list
     } catch (err) {
       error = "Failed to upvote question";
       console.error(err);

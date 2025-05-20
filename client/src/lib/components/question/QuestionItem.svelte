@@ -1,16 +1,15 @@
 <script>
     import { useQuestionState } from "$lib/states/questionState.svelte.js";
     const qs = useQuestionState();
-  
-    // prop
-    let { question } = $props();
-    
+
+    let { question, courseId } = $props(); // Use $props() for Svelte 5 compatibility
+
     const handleUpvote = async () => {
-      await qs.upvote(question.id);
+      await qs.upvote(courseId, question.id); // Use courseId when upvoting
     };
-    
+
     const handleDelete = async () => {
-      await qs.remove(question.id);
+      await qs.remove(courseId, question.id); // Use courseId when deleting
     };
   </script>
   
@@ -20,6 +19,6 @@
   
     <p>Upvotes: {question.upvotes}</p>
   
-    <button onclick={handleUpvote}>Upvote</button>
-    <button onclick={handleDelete}>Delete</button>
+    <button on:click={handleUpvote}>Upvote</button>
+    <button on:click={handleDelete}>Delete</button>
   </div>

@@ -2,6 +2,8 @@
     import { useQuestionState } from "$lib/states/questionState.svelte.js";
     const qs = useQuestionState();
   
+    export let courseId; // Accept courseId as a prop
+  
     let title = "";
     let text  = "";
     let submitting = false;
@@ -11,7 +13,7 @@
       if (!title.trim() || !text.trim() || submitting) return;
       
       submitting = true;
-      await qs.add({ title, text });
+      await qs.add(courseId, { title, text }); // Use courseId when adding a question
       title = ""; 
       text = "";
       submitting = false;

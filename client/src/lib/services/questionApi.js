@@ -1,20 +1,19 @@
 import { PUBLIC_API_URL } from "$env/static/public";
 
 // Constants
-const COURSE_ID = 1;
 const API_BASE_URL = PUBLIC_API_URL; // Use the environment variable
 
 // API endpoints for questions
 export const questionApi = {
-  // Get all questions for course 1
-  async getQuestions() {
-    const response = await fetch(`${API_BASE_URL}/courses/${COURSE_ID}/questions`);
+  // Get all questions for a specific course
+  async getQuestions(courseId) {
+    const response = await fetch(`${API_BASE_URL}/courses/${courseId}/questions`);
     return response.json();
   },
 
-  // Add a new question
-  async addQuestion(question) {
-    const response = await fetch(`${API_BASE_URL}/courses/${COURSE_ID}/questions`, {
+  // Add a new question to a specific course
+  async addQuestion(courseId, question) {
+    const response = await fetch(`${API_BASE_URL}/courses/${courseId}/questions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(question),
@@ -22,19 +21,19 @@ export const questionApi = {
     return response.json();
   },
 
-  // Upvote a question
-  async upvoteQuestion(questionId) {
-    const response = await fetch(`${API_BASE_URL}/courses/${COURSE_ID}/questions/${questionId}/upvote`, {
+  // Upvote a question for a specific course
+  async upvoteQuestion(courseId, questionId) {
+    const response = await fetch(`${API_BASE_URL}/courses/${courseId}/questions/${questionId}/upvote`, {
       method: "POST",
     });
     return response.json();
   },
 
-  // Delete a question
-  async deleteQuestion(questionId) {
-    const response = await fetch(`${API_BASE_URL}/courses/${COURSE_ID}/questions/${questionId}`, {
+  // Delete a question for a specific course
+  async deleteQuestion(courseId, questionId) {
+    const response = await fetch(`${API_BASE_URL}/courses/${courseId}/questions/${questionId}`, {
       method: "DELETE",
     });
     return response.json();
-  }
+  },
 };

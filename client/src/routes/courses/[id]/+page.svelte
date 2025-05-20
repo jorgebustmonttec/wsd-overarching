@@ -1,5 +1,9 @@
 <script>
+  import Questions from "$lib/components/question/Questions.svelte";
+
   let { data } = $props();
 </script>
 
-<p>course {data.id}</p>
+<h1>Course {data.id}</h1>
+
+<Questions courseId={data.id} />
