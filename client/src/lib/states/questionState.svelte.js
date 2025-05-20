@@ -10,7 +10,7 @@ const loadQuestions = async (courseId) => {
   try {
     loading = true;
     error = null;
-    questions = await questionApi.getQuestions(courseId);
+    questions = (await questionApi.getQuestions(courseId)).reverse(); // Reverse the order
   } catch (err) {
     error = "Failed to load questions";
     console.error(err);

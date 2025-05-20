@@ -19,6 +19,6 @@
   
     <p>Upvotes: {question.upvotes}</p>
   
-    <button on:click={handleUpvote}>Upvote</button>
-    <button on:click={handleDelete}>Delete</button>
+    <button onclick={handleUpvote}>Upvote</button>
+    <button onclick={handleDelete}>Delete</button>
   </div>
