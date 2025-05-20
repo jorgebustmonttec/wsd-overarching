@@ -5,6 +5,6 @@
 
 <h1>Courses</h1>
 
-<CourseForm />
-<hr />
+
 <CourseList />
+<CourseForm />

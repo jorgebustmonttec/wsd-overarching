@@ -7,19 +7,19 @@ const API_BASE_URL = PUBLIC_API_URL; // Use the environment variable
 export const courseApi = {
   // Get all courses
   async getCourses() {
-    const response = await fetch(`${API_BASE_URL}/courses`);
+    const response = await fetch(`${API_BASE_URL}/api/courses`);
     return response.json();
   },
 
   // Get a single course by ID
   async getCourse(courseId) {
-    const response = await fetch(`${API_BASE_URL}/courses/${courseId}`);
+    const response = await fetch(`${API_BASE_URL}/api/courses/${courseId}`);
     return response.json();
   },
 
   // Add a new course
   async addCourse(course) {
-    const response = await fetch(`${API_BASE_URL}/courses`, {
+    const response = await fetch(`${API_BASE_URL}/api/courses`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(course),
@@ -29,7 +29,7 @@ export const courseApi = {
 
   // Delete a course by ID
   async deleteCourse(courseId) {
-    const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/courses/${courseId}`, {
       method: "DELETE",
     });
     return response.json();
