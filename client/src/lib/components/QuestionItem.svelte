@@ -13,12 +13,24 @@
     };
   </script>
 
-  <div class="border p-2 space-y-1">
-    <h3>{question.title}</h3>
-    <p>{question.text}</p>
+  <div class="border border-gray-300 rounded-lg p-4 shadow-sm bg-white space-y-2">
+    <h3 class="text-lg font-semibold text-gray-800">{question.title}</h3>
+    <p class="text-gray-600">{question.text}</p>
 
-    <p>Upvotes: {question.upvotes}</p>
+    <p class="text-sm text-gray-500">Upvotes: {question.upvotes}</p>
 
-    <button onclick={handleUpvote}>Upvote</button>
-    <button onclick={handleDelete}>Delete</button>
+    <div class="flex space-x-2">
+      <button
+        onclick={handleUpvote}
+        class="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition shadow-md"
+      >
+        Upvote
+      </button>
+      <button
+        onclick={handleDelete}
+        class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition shadow-md"
+      >
+        Delete
+      </button>
+    </div>
   </div>

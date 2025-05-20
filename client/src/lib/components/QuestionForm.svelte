@@ -20,23 +20,38 @@
     };
   </script>
 
-  <form on:submit={submit} class="space-y-2">
-    <input
-      type="text"
-      placeholder="Question title"
-      bind:value={title}
-      required
-    />
+  <form on:submit={submit} class="space-y-4 bg-white shadow-lg p-6 rounded-lg border border-gray-200">
+    <div>
+      <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Question Title</label>
+      <input
+        type="text"
+        id="title"
+        placeholder="Enter question title"
+        bind:value={title}
+        required
+        class="input w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
 
-    <br />
-    <br />
+    <div>
+      <label for="text" class="block text-sm font-medium text-gray-700 mb-1">Question Details</label>
+      <textarea
+        id="text"
+        rows="4"
+        placeholder="Enter question details"
+        bind:value={text}
+        required
+        class="input w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      ></textarea>
+    </div>
 
-    <textarea
-      rows="4"
-      placeholder="Question details"
-      bind:value={text}
-      required
-    ></textarea>
-
-    <input type="submit" value="Add Question" disabled={submitting} />
+    <div class="flex justify-end">
+      <button
+        type="submit"
+        disabled={submitting}
+        class="btn w-full px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg shadow-md transition-all disabled:opacity-50"
+      >
+        {submitting ? "Adding..." : "Add Question"}
+      </button>
+    </div>
   </form>

@@ -14,25 +14,29 @@
   });
 </script>
 
-<h1>Ask &amp; Vote Questions</h1>
+<div class="space-y-6">
+  <h1 class="text-2xl font-bold text-gray-800">Ask &amp; Vote Questions</h1>
 
-<QuestionForm {courseId} />
+  <div class="bg-white shadow-lg p-6 rounded-lg border border-gray-200">
+    <QuestionForm {courseId} />
+  </div>
 
-<hr />
+  <hr class="border-gray-300" />
 
-<h2>Questions</h2>
-{#if qs.isLoading}
-  <p>Loading questions...</p>
-{:else if qs.hasError}
-  <p>Error: {qs.hasError}</p>
-{:else if qs.list.length === 0}
-  <p>No questions yet. Be the first to ask!</p>
-{:else}
-  <ul>
-    {#each qs.list as question}
-      <li>
-        <QuestionItem {question} {courseId} />
-      </li>
-    {/each}
-  </ul>
-{/if}
+  <h2 class="text-xl font-semibold text-gray-700">Questions</h2>
+  {#if qs.isLoading}
+    <p class="text-gray-500">Loading questions...</p>
+  {:else if qs.hasError}
+    <p class="text-red-500 font-semibold">Error: {qs.hasError}</p>
+  {:else if qs.list.length === 0}
+    <p class="text-gray-500">No questions yet. Be the first to ask!</p>
+  {:else}
+    <ul class="space-y-4">
+      {#each qs.list as question}
+        <li>
+          <QuestionItem {question} {courseId} />
+        </li>
+      {/each}
+    </ul>
+  {/if}
+</div>
