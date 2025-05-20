@@ -1,9 +1,9 @@
 <script>
   import { onMount } from "svelte";
   import { useCourseState } from "$lib/states/courseState.svelte.js";
-  import CourseItem from "./CourseItem.svelte";
-
   const cs = useCourseState();
+
+  import CourseItem from "./CourseItem.svelte";
 
   // Fetch courses when the component is mounted
   onMount(() => {
@@ -11,16 +11,14 @@
   });
 </script>
 
-<ul>
-  {#if cs.isLoading}
-    <li>Loading courses...</li>
-  {:else if cs.hasError}
-    <li>Error: {cs.hasError}</li>
-  {:else if cs.list.length === 0}
-    <li>No courses available.</li>
-  {:else}
+{#if cs.isLoading}
+  <p>Loading courses...</p>
+{:else if cs.list.length === 0}
+  <p>No courses exist yet.</p>
+{:else}
+  <ul>
     {#each cs.list as course}
       <CourseItem {course} />
     {/each}
-  {/if}
-</ul>
+  </ul>
+{/if}

@@ -11,17 +11,17 @@
 
     submitting = true;
     await cs.add({ name });
-    name = ""; // Clear the input field
+    name = "";
     submitting = false;
   };
 </script>
 
-<form on:submit={submit}>
+<form on:submit={submit} class="space-y-2">
   <input
     type="text"
-    placeholder="Course name"
+    placeholder="name"
     bind:value={name}
     required
   />
-  <button type="submit" disabled={submitting}>Add Course</button>
+  <input type="submit" value="Add Course" disabled={submitting} />
 </form>
