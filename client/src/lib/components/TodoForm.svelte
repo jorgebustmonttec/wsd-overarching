@@ -11,12 +11,18 @@
   };
 </script>
 
-<form onsubmit={addTodo}>
-  <label for="name">Todo</label>
-  <input id="name" name="name" type="text" placeholder="Enter a new todo" />
-  <div>
-    <input id="done" name="done" type="checkbox" />
-    <label for="done">Done</label>
-  </div>
-  <input type="submit" value="Add Todo" />
+<form onsubmit={addTodo} class="space-y-4 max-w-md w-full mx-auto p-4 card border-gray-300 border-[2px]">
+  <h2 class="h2">Add a Todo</h2>
+
+  <label class="label" for="name">
+    <span class="label-text">Todo</span>
+    <input class="input" id="name" name="name" type="text" placeholder="Enter a new todo" />
+  </label>
+
+  <label class="flex items-center space-x-2" for="done">
+    <input class="checkbox" id="done" name="done" type="checkbox" />
+    <span>Done</span>
+  </label>
+
+  <button type="submit" class="w-full btn preset-filled-primary-500">Add Todo</button>
 </form>
