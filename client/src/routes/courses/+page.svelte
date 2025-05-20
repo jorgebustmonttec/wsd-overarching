@@ -8,4 +8,3 @@
 <CourseForm />
 <hr />
 <CourseList />
-

@@ -19,7 +19,7 @@
 <form on:submit={submit} class="space-y-2">
   <input
     type="text"
-    placeholder="name"
+    placeholder="Course name"
     bind:value={name}
     required
   />
