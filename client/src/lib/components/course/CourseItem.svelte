@@ -13,5 +13,5 @@
   <a href={`/courses/${course.id}`} class="text-blue-500 underline">
     {course.name}
   </a>
-  <button on:click={handleDelete} class="text-red-500">Remove</button>
+  <button onclick={handleDelete} class="text-red-500">Remove</button>
 </li>
