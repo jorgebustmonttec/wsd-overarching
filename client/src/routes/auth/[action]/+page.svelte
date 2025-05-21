@@ -28,7 +28,6 @@
 {#if message}
   <p class="text-xl">Message from server: {message}</p>
 {/if}
-
 <form class="space-y-4" onsubmit={handleForm}>
   <label class="label" for="email">
     <span class="label-text">Email</span>
@@ -44,7 +43,10 @@
     <span class="label-text">Password</span>
     <input class="input" id="password" name="password" type="password" />
   </label>
-  <button class="w-full btn preset-filled-primary-500" type="submit">
+  <button
+    class="w-full btn preset-filled-primary-500 bg-blue-500 hover:bg-blue-600 text-white"
+    type="submit"
+  >
     {data.action === "login" ? "Login" : "Register"}
   </button>
 </form>
