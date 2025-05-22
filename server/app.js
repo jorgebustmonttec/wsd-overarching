@@ -7,7 +7,13 @@ import { hash, verify } from "jsr:@denorg/scrypt@4.4.4";
 const app = new Hono();
 const sql = postgres();        // creds come from project.env
 
-app.use("/*", cors());
+app.use(
+  "/*",
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 app.use("/*", logger());
 
 app.get("/", (c) => c.json({ message: "Hello world!" }));
