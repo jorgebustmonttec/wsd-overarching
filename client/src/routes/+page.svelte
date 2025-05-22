@@ -2,4 +2,4 @@
     import Message from "$lib/components/Message.svelte";
 </script>
 
-<Message />
+<p>Hello World!</p>

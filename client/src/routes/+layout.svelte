@@ -1,10 +1,12 @@
 <script>
   import "../app.css";
-  let { children } = $props();
+  let { children, data } = $props();
 </script>
 
+{#if data.user}
+  <p>Hello {data.user}!</p>
+{/if}
 
-  <main class="container mx-auto max-w-2xl grow">
-    {@render children()}
-  </main>
-
+<main class="container mx-auto max-w-lg">
+  {@render children()}
+</main>
