@@ -1,12 +1,14 @@
-import { Hono } from "@hono/hono";
-import { cors } from "@hono/hono/cors";
-import { logger } from "@hono/hono/logger";
-import postgres from "postgres";
+import { Hono } from "jsr:@hono/hono@4.6.5";
+import { getCookie, setCookie } from "jsr:@hono/hono@4.6.5/cookie";
+import { cors } from "jsr:@hono/hono@4.6.5/cors";
 import { hash, verify } from "jsr:@denorg/scrypt@4.4.4";
+import postgres from "postgres";
+
+const sql = postgres();
+const COOKIE_KEY = "username";
+
 
 const app = new Hono();
-const sql = postgres();        // creds come from project.env
-
 app.use(
   "/*",
   cors({
@@ -14,53 +16,49 @@ app.use(
     credentials: true,
   }),
 );
-app.use("/*", logger());
 
-app.get("/", (c) => c.json({ message: "Hello world!" }));
-
-
-
-app.post("/api/auth/register", async (c) => {
-  const data = await c.req.json();
-  const email = data.email.trim().toLowerCase();
-  const password = data.password.trim();
+app.post("/api/register", async (c) => {
+  const { username, password } = await c.req.json();
+  const cleanedUsername = username.trim().toLowerCase();
+  const cleanedPassword = password.trim();
 
   try {
-    await sql`INSERT INTO users (email, password_hash)
-      VALUES (${email}, ${hash(password)})`;
-  } catch (_e) {
-    // Do nothing on error (e.g. duplicate email), still respond below
+    const hashedPassword = hash(cleanedPassword);
+    await sql`
+      INSERT INTO users (username, password_hash)
+      VALUES (${cleanedUsername}, ${hashedPassword})
+    `;
+  } catch (err) {
+    // Optional: console.error(err)
+    // Don't leak info about duplicates
   }
 
-  return c.json({
-    message: `Confirmation email sent to address ${email}.`,
-  });
+  return c.json({ message: "Registered successfully." });
 });
 
-app.post("/api/auth/login", async (c) => {
-  const data = await c.req.json();
-  const email = data.email.trim().toLowerCase();
-  const password = data.password.trim();
+app.post("/api/login", async (c) => {
+  const { username, password } = await c.req.json();
+  const cleanedUsername = username.trim().toLowerCase();
+  const cleanedPassword = password.trim();
 
-  const result = await sql`SELECT * FROM users WHERE email = ${email}`;
+  const result = await sql`
+    SELECT * FROM users
+    WHERE username = ${cleanedUsername}
+  `;
 
   if (result.length === 0) {
-    c.status(401);
-    return c.json({ message: "Invalid email or password!" });
+    return c.json({ message: "Incorrect username or password." });
   }
 
   const user = result[0];
-  const passwordValid = verify(password, user.password_hash);
+  const isValid = verify(cleanedPassword, user.password_hash);
 
-  if (!passwordValid) {
-    c.status(401);
-    return c.json({ message: "Invalid email or password!" });
+  if (!isValid) {
+    return c.json({ message: "Incorrect username or password." });
   }
 
-  return c.json({
-    message: `Logged in as user with id ${user.id}`,
-  });
+  setCookie(c, COOKIE_KEY, cleanedUsername);
+  return c.json({ message: "Welcome!" });
 });
-
 
 export default app;
