@@ -1,16 +1,32 @@
+
+
+// ============================ IMPORTS ============================
 import { Hono } from "@hono/hono";
 import { cors } from "@hono/hono/cors";
 import { logger } from "@hono/hono/logger";
 import postgres from "postgres";
+import { hash, verify } from "jsr:@denorg/scrypt@4.4.4";
+import { getCookie, setCookie } from "jsr:@hono/hono@4.6.5/cookie";
+import * as jwt from "jsr:@hono/hono@4.6.5/jwt";
 import { z } from "zod";
 import { zValidator } from "zValidator";
 
-// Initialize database connection (uses env variables)
-const sql = postgres();
+// ============================ APP SETUP ============================
 
+// ============== CONSTANTS ==============
 const app = new Hono();
-app.use("/*", cors());
-app.use("/*", logger());
+const sql = postgres();        // creds come from project.env
+
+
+const JWT_SECRET = "wsd-project-secret";
+const COOKIE_KEY = "token";
+
+const userMiddleware = async (c, next) => {
+  const token = getCookie(c, COOKIE_KEY);
+  const { payload } = jwt.decode(token, JWT_SECRET);
+  c.user = payload;
+  await next();
+};
 
 // Validation schemas
 const courseSchema = z.object({
@@ -22,7 +38,76 @@ const questionSchema = z.object({
   text: z.string().min(3, "Question text must be at least 3 characters"),
 });
 
-// --- Courses Endpoints ---
+
+// ============== MIDDLEWARE ==============
+app.use(
+  "/*",
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
+
+app.use("/*", logger());
+
+
+
+
+// ============================ ENDPOINTS ============================
+
+// ============== AUTH ENDPOINTS ==============
+
+// POST /api/auth/register
+app.post("/api/auth/register", async (c) => {
+  const { email, password } = await c.req.json();
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanPassword = password.trim();
+
+  try {
+    await sql`
+      INSERT INTO users (email, password_hash)
+      VALUES (${cleanEmail}, ${hash(cleanPassword)})
+    `;
+  } catch {
+    // silent fail (e.g. duplicate)
+  }
+
+  return c.json({ message: "User registered (or already exists)." });
+});
+
+// POST /api/auth/login
+app.post("/api/auth/login", async (c) => {
+  const { email, password } = await c.req.json();
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanPassword = password.trim();
+
+  const result = await sql`
+    SELECT * FROM users WHERE lower(email) = ${cleanEmail}
+  `;
+
+  if (result.length === 0) {
+    return c.json({ message: "Incorrect email or password." });
+  }
+
+  const user = result[0];
+  const valid = verify(cleanPassword, user.password_hash);
+
+  if (!valid) {
+    return c.json({ message: "Incorrect email or password." });
+  }
+
+  const token = await jwt.sign({ email: user.email }, JWT_SECRET);
+
+  setCookie(c, COOKIE_KEY, token, {
+    httpOnly: true,
+    sameSite: "Lax",
+    path: "/",
+  });
+
+  return c.json({ message: "Welcome!" });
+});
+
+// ============== COURSES ENDPOINTS ==============
 
 // 1. GET /api/courses
 app.get("/api/courses", async (c) => {
@@ -76,7 +161,7 @@ app.delete("/api/courses/:id", async (c) => {
   return c.json(deletedCourse);
 });
 
-// --- Questions Endpoints ---
+// ============== QUESTIONS ENDPOINTS ==============
 
 // 5. GET /api/courses/:id/questions
 app.get("/api/courses/:id/questions", async (c) => {
