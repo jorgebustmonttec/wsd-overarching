@@ -2,7 +2,7 @@ import { PUBLIC_INTERNAL_API_URL } from "$env/static/public";
 
 import { decodeJwt } from "jose";
 
-const COOKIE_KEY = "token";
+const COOKIE_KEY = "auth";
 
 export const handle = async ({ event, resolve }) => {
   const authCookie = event.cookies.get(COOKIE_KEY);
