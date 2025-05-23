@@ -93,11 +93,17 @@ app.post("/api/auth/login", async (c) => {
   const user = result[0];
 
   const passwordValid = verify(data.password.trim(), user.password_hash);
-  if (passwordValid) {
-    // define the payload
-    const payload = {
-      id: user.id,
-    };
+    if (passwordValid) {
+      const rolesResult = await sql`SELECT role FROM user_roles
+        WHERE user_id = ${user.id}`;
+      const roles = rolesResult.map((r) => r.role);
+
+      const payload = {
+        id: user.id,
+        roles,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
+      };
+
 
     // create the token by signing the payload
     const token = await jwt.sign(payload, JWT_SECRET);
