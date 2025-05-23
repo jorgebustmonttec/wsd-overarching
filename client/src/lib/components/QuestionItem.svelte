@@ -32,5 +32,11 @@
       >
         Delete
       </button>
+       <a
+        href={`/courses/${courseId}/questions/${question.id}`}
+        class="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition shadow-md"
+      >
+        View Replies
+      </a>
     </div>
   </div>
