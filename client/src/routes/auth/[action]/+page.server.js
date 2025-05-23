@@ -10,6 +10,7 @@ const apiRequest = async (url, data) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+    credentials: "include",
   });
 };
 export const actions = {
