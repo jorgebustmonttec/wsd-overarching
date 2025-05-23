@@ -107,6 +107,33 @@ app.post("/api/auth/login", async (c) => {
   return c.json({ message: "Welcome!" });
 });
 
+app.post("/api/auth/verify", async (c) => {
+  const token = getCookie(c, COOKIE_KEY);
+  if (!token) {
+    c.status(401);
+    return c.json({ message: "No token found!" });
+  }
+
+  try {
+    const payload = await jwt.verify(token, JWT_SECRET);
+    payload.exp = Math.floor(Date.now() / 1000) + 60;
+
+    const refreshedToken = await jwt.sign(payload, JWT_SECRET);
+
+    setCookie(c, COOKIE_KEY, refreshedToken, {
+      path: "/",
+      domain: "localhost",
+      httpOnly: true,
+      sameSite: "lax",
+    });
+
+    return c.json({ message: "Valid token!" });
+  } catch (_e) {
+    c.status(401);
+    return c.json({ message: "Invalid token!" });
+  }
+});
+
 // ============== COURSES ENDPOINTS ==============
 
 // 1. GET /api/courses
