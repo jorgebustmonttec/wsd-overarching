@@ -13,12 +13,16 @@
         <li><a class="anchor" href="/auth/register">Register</a></li>
       </ul>
     </nav>
-    {#if data.user}
-      <p class="text-sm text-right text-gray-500 p-4">
-        Logged in as: {data.user.email}
-      </p>
-    {/if}
+
   </header>
+
+
+      {#if data.user}
+        <p class="text-sm text-right text-gray-500 p-4">
+          {data.user.email}
+        </p>
+
+    {/if}
 
   <main class="container mx-auto max-w-2xl grow">
     {@render children()}

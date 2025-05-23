@@ -41,7 +41,7 @@ export const actions = {
     );
 
     if (response.ok) {
-      throw redirect(302, "/auth/login?registered=true");
+      throw redirect(302, "/auth/login");
     }
 
     return await response.json();
