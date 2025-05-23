@@ -1,6 +1,6 @@
 <script>
   import "../app.css";
-  let { children } = $props();
+  let { children, data } = $props();
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -9,8 +9,15 @@
       <ul class="flex space-x-4">
         <li><a class="anchor" href="/">Home</a></li>
         <li><a class="anchor" href="/courses">Courses</a></li>
+        <li><a class="anchor" href="/auth/login">Login</a></li>
+        <li><a class="anchor" href="/auth/register">Register</a></li>
       </ul>
     </nav>
+    {#if data.user}
+      <p class="text-sm text-right text-gray-500 p-4">
+        Logged in as: {data.user.email}
+      </p>
+    {/if}
   </header>
 
   <main class="container mx-auto max-w-2xl grow">
