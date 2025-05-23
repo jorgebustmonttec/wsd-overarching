@@ -35,10 +35,13 @@ export const handle = async ({ event, resolve }) => {
     event.cookies.set(COOKIE_KEY, cookieValue, { path: "/", secure: false });
 
     try {
-      const payload = decodeJwt(authCookie);
-      event.locals.user = payload;
+        const payload = decodeJwt(cookieValue ?? authCookie);
+        console.log("JWT payload:", payload);
+
+
+        event.locals.user = payload;
     } catch (e) {
-      console.log(e);
+        console.log(e);
     }
   }
 
